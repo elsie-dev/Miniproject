@@ -1,0 +1,28 @@
+# playbook.yaml
+
+---
+- name: Configure EC2 instances
+  hosts: all
+  become: true
+  tasks:
+    - name: Install Apache
+      become: true
+      apt:
+        name: apache2
+        state: present
+
+    - name: Set timezone to Africa/Lagos
+      become: true
+      command: timedatectl set-timezone Africa/Lagos
+
+    - name: Create simple HTML page
+      become: true
+      copy:
+        content: "<html><body><h1>Hello from EC2 instance {{ inventory_hostname }}</h1></body></html>"
+        dest: /var/www/html/index.html
+
+    - name: Restart Apache
+      become: true
+      service:
+        name: apache2
+        state: restarted
